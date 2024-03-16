@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras
 import numpy as np
 
-EPOCHS = 10
+EPOCHS = 20
 LEARNING_RATE = 0.2
 BATCH_SIZE = 32
 
@@ -113,45 +113,50 @@ print("Validation Accuracy:", val_accuracy)
 
 
 # Convert the model to TensorFlow Lite
-"""
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
-"""
+
 
 # for images, labels in train_ds.take(1):
 #     numpy_images = images.numpy()
 #     numpy_labels = labels.numpy()
 
-# def representative_data_gen():
-#   for input_value in tf.data.Dataset.from_tensor_slices(numpy_images).batch(1).take(100):
-#     yield [input_value]
+"""
+def representative_data_gen():
+  for input_value in tf.data.Dataset.from_tensor_slices(numpy_images).batch(1).take(100):
+    yield [input_value]
 
-# converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-# converter.optimizations = [tf.lite.Optimize.DEFAULT]
-# converter.representative_dataset = representative_data_gen
-# converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-# converter.inference_input_type = tf.int8
-# converter.inference_output_type = tf.int8
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-# tflite_model_quant = converter.convert()
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.representative_dataset = representative_data_gen
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
 
+tflite_model_quant = converter.convert()
+"""
 save_dir = "model.keras"
 model.save(save_dir)
 
-# converter = tf.lite.TFLiteConverter.from_saved_model(save_dir)
 
-# converter.target_spec.supported_ops = [
-#   tf.lite.OpsSet.TFLITE_BUILTINS, # enable TensorFlow Lite ops.
-#   tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
-# ]
-# tflite_model = converter.convert()
+
+converter = tf.lite.TFLiteConverter.from_saved_model(save_dir)
+
+converter.target_spec.supported_ops = [
+   tf.lite.OpsSet.TFLITE_BUILTINS, # enable TensorFlow Lite ops.
+   tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
+ ]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
+tflite_model = converter.convert()
 
 # new_model = tf.keras.models.load_model('model.keras')
 
 # # Save the model in a file
-with open('model2.tflite', 'wb') as f:
-   f.write(tflite_model_quant)
+with open('model.tflite', 'wb') as f:
+   f.write(tflite_model)
 
 # Test model
 result = model.evaluate(test_ds)
