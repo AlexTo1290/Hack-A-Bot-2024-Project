@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras
 import numpy as np
 
-EPOCHS = 1
+EPOCHS = 10
 LEARNING_RATE = 0.2
 BATCH_SIZE = 32
 
@@ -92,14 +92,14 @@ model.compile(
 # train_ds = train_ds.cache().repeat().batch(BATCH_SIZE)
 
 model.fit(train_ds, validation_data = val_ds, epochs=EPOCHS)
-# model.summary()
+model.summary()
 
 
 # # Evaluate the model on the validation dataset
-# val_loss, val_accuracy = model.evaluate(val_ds)
+val_loss, val_accuracy = model.evaluate(val_ds)
 
 # Print the validation accuracy
-# print("Validation Accuracy:", val_accuracy)
+print("Validation Accuracy:", val_accuracy)
 
 
 
@@ -127,8 +127,8 @@ converter.inference_output_type = tf.int8
 
 tflite_model_quant = converter.convert()
 
-# save_dir = "model.keras"
-# model.save(save_dir)
+save_dir = "model.keras"
+model.save(save_dir)
 
 # converter = tf.lite.TFLiteConverter.from_saved_model(save_dir)
 
@@ -141,6 +141,6 @@ tflite_model_quant = converter.convert()
 # new_model = tf.keras.models.load_model('model.keras')
 
 # # Save the model in a file
-# with open('model.tflite', 'wb') as f:
-#   f.write(tflite_model)
+with open('model2.tflite', 'wb') as f:
+   f.write(tflite_model_quant)
 
