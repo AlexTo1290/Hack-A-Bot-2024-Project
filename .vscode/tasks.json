@@ -1,0 +1,171 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build kernel",
+			"type": "shell",
+			"command": ".vscode/build.sh buildkernel",
+			"options": {
+				"env": {
+					"SDK_PATH": "${config:spresense.sdk.path}",
+					"ISAPPFOLDER": "true"
+				}
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Build application",
+			"type": "shell",
+			"command": ".vscode/build.sh build",
+			"options": {
+				"env": {
+					"SDK_PATH": "${config:spresense.sdk.path}",
+					"ISAPPFOLDER": "true"
+				}
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Clean kernel",
+			"type": "shell",
+			"command": ".vscode/build.sh cleankernel",
+			"options": {
+				"env": {
+					"SDK_PATH": "${config:spresense.sdk.path}",
+					"ISAPPFOLDER": "true"
+				}
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Clean application",
+			"type": "shell",
+			"command": ".vscode/build.sh clean",
+			"options": {
+				"env": {
+					"SDK_PATH": "${config:spresense.sdk.path}",
+					"ISAPPFOLDER": "true"
+				}
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Check flashable SPK file",
+			"type": "shell",
+			"command": "${config:spresense.env.extension.path}/scripts/check_spk.sh",
+			"args": [
+				"",
+				"out/*.nuttx.spk"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Build and flash",
+			"type": "shell",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Build application",
+				"Flash worker"
+			],
+			"command": "${config:spresense.sdk.path}/sdk/tools/flash.sh",
+			"args": [
+				"-c",
+				"${config:spresense.serial.port}",
+				"-b",
+				"${config:spresense.flashing.speed}",
+				"out/*.nuttx.spk"
+			],
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Flash application",
+			"type": "shell",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Check flashable SPK file",
+				"Flash worker"
+			],
+			"command": "${config:spresense.sdk.path}/sdk/tools/flash.sh",
+			"args": [
+				"-c",
+				"${config:spresense.serial.port}",
+				"-b",
+				"${config:spresense.flashing.speed}",
+				"out/*.nuttx.spk"
+			],
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Flash worker",
+			"type": "shell",
+			"command": "${config:spresense.env.extension.path}/scripts/flash_worker.sh",
+			"args": [
+				"${config:spresense.sdk.path}",
+				"${config:spresense.serial.port}",
+				"${config:spresense.flashing.speed}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Clean flash",
+			"type": "shell",
+			"command": "${config:spresense.env.extension.path}/scripts/prepare_debug.sh",
+			"args": [
+				"${config:spresense.sdk.path}",
+				"linux",
+				"${config:spresense.serial.port}"
+			],
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Flash bootloader",
+			"type": "shell",
+			"command": "${config:spresense.sdk.path}/sdk/tools/flash.sh",
+			"args": [
+				"-l",
+				"${config:spresense.sdk.path}/firmware/spresense",
+				"-c",
+				"${config:spresense.serial.port}",
+				"-b",
+				"${config:spresense.flashing.speed}"
+			],
+			"group": "test",
+			"problemMatcher": [
+				"$gcc"
+			]
+		}
+	]
+}
