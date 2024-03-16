@@ -1,0 +1,58 @@
+makereye_main.c.home.aap9002.Documents.Projects.Home.Hack-A-Bot-2024-Project.makereye.o: \
+ makereye_main.c /home/aap9002/spresense/nuttx/include/nuttx/config.h \
+ /home/aap9002/spresense/nuttx/include/stdio.h \
+ /home/aap9002/spresense/nuttx/include/sys/types.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/compiler.h \
+ /home/aap9002/spresense/nuttx/include/stdint.h \
+ /home/aap9002/spresense/nuttx/include/arch/types.h \
+ /home/aap9002/spresense/nuttx/include/arch/inttypes.h \
+ /home/aap9002/spresense/nuttx/include/limits.h \
+ /home/aap9002/spresense/nuttx/include/arch/limits.h \
+ /home/aap9002/spresenseenv/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdarg.h \
+ /home/aap9002/spresense/nuttx/include/time.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/fs/fs.h \
+ /home/aap9002/spresense/nuttx/include/stdbool.h \
+ /home/aap9002/spresense/nuttx/include/dirent.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/mutex.h \
+ /home/aap9002/spresense/nuttx/include/assert.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/semaphore.h \
+ /home/aap9002/spresense/nuttx/include/errno.h \
+ /home/aap9002/spresense/nuttx/include/semaphore.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/queue.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/clock.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/mm/map.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/mm/gran.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/lib/lib.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/kmalloc.h \
+ /home/aap9002/spresense/nuttx/include/stdlib.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/mm/mm.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/addrenv.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/wqueue.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/wdog.h \
+ /home/aap9002/spresense/nuttx/include/arch/arch.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/pgalloc.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/userspace.h \
+ /home/aap9002/spresense/nuttx/include/signal.h \
+ /home/aap9002/spresense/nuttx/include/pthread.h \
+ /home/aap9002/spresense/nuttx/include/unistd.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/arch.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/cache.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/sched.h \
+ /home/aap9002/spresense/nuttx/include/sched.h \
+ /home/aap9002/spresense/nuttx/include/strings.h \
+ /home/aap9002/spresense/nuttx/include/string.h \
+ /home/aap9002/spresense/nuttx/include/stddef.h \
+ /home/aap9002/spresense/nuttx/include/alloca.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/irq.h \
+ /home/aap9002/spresense/nuttx/include/arch/irq.h \
+ /home/aap9002/spresense/nuttx/include/arch/chip/irq.h \
+ /home/aap9002/spresense/nuttx/include/arch/armv7-m/irq.h \
+ /home/aap9002/spresense/nuttx/include/arch/armv7-m/nvicpri.h \
+ /home/aap9002/spresense/nuttx/include/arch/chip/chip.h \
+ /home/aap9002/spresense/nuttx/include/nuttx/net/net.h \
+ /home/aap9002/spresense/nuttx/include/sys/socket.h \
+ /home/aap9002/spresense/nuttx/include/sys/uio.h \
+ /home/aap9002/spresense/nuttx/include/malloc.h \
+ /home/aap9002/spresense/nuttx/include/fcntl.h
+# No files specified for dependency generation
+# No files specified for dependency generation

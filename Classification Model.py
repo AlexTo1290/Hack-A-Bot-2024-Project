@@ -33,6 +33,12 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     batch_size = BATCH_SIZE,
     )
 
+test_ds = tf.keras.utils.image_dataset_from_directory(
+    "Test",
+    image_size=(180, 180),
+    batch_size = BATCH_SIZE,
+    )
+
 def normalize(images, labels):
   images = tf.cast(images, tf.float32)
   images /= 255
@@ -40,9 +46,12 @@ def normalize(images, labels):
 
 train_ds =  train_ds.map(normalize)
 val_ds = val_ds.map(normalize)
+test_ds = test_ds.map(normalize)
 
 train_ds = train_ds.cache()
 val_ds = val_ds.cache()
+test_ds = val_ds.cache()
+
 
 """
 model = tf.keras.Sequential([
@@ -109,23 +118,23 @@ converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 """
 
-for images, labels in train_ds.take(1):
-    numpy_images = images.numpy()
-    numpy_labels = labels.numpy()
+# for images, labels in train_ds.take(1):
+#     numpy_images = images.numpy()
+#     numpy_labels = labels.numpy()
 
-def representative_data_gen():
-  for input_value in tf.data.Dataset.from_tensor_slices(numpy_images).batch(1).take(100):
-    yield [input_value]
+# def representative_data_gen():
+#   for input_value in tf.data.Dataset.from_tensor_slices(numpy_images).batch(1).take(100):
+#     yield [input_value]
 
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
+# converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-converter.optimizations = [tf.lite.Optimize.DEFAULT]
-converter.representative_dataset = representative_data_gen
-converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-converter.inference_input_type = tf.int8
-converter.inference_output_type = tf.int8
+# converter.optimizations = [tf.lite.Optimize.DEFAULT]
+# converter.representative_dataset = representative_data_gen
+# converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+# converter.inference_input_type = tf.int8
+# converter.inference_output_type = tf.int8
 
-tflite_model_quant = converter.convert()
+# tflite_model_quant = converter.convert()
 
 save_dir = "model.keras"
 model.save(save_dir)
@@ -144,3 +153,6 @@ model.save(save_dir)
 with open('model2.tflite', 'wb') as f:
    f.write(tflite_model_quant)
 
+# Test model
+result = model.evaluate(test_ds)
+print(result)
