@@ -28,9 +28,19 @@
 #define BAUDRATE                (115200)
 #define TOTAL_PICTURE_COUNT     (1)
 
+
+
+// constants won't change. They're used here to set pin numbers:
+const int buttonPin = 2;  // the number of the pushbutton pin
+const int ledPin = 13;    // the number of the LED pin
+
 SDClass  theSD;
 int take_picture_count = 0;
 File file;
+
+String direction = "checkin";
+
+// int buttonPin = 0;
 
 /**
  * Print error message
@@ -116,6 +126,19 @@ void setup()
 {
   CamErr err;
 
+  // pinMode(PIN_D01, INPUT);
+  Serial.println("started");
+
+  // initialize the LED pin as an output:
+  pinMode(LED0, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  // initialize the pushbutton pin as an input:
+  pinMode(digitalPinToPort(PIN_D22), INPUT);
+  pinMode(digitalPinToPort(PIN_D23), INPUT);
+
+  digitalWrite(LED0, LOW);
+  digitalWrite(LED1, LOW);
+
   /* Open serial communications and wait for port to open */
 
   Serial.begin(BAUDRATE);
@@ -180,10 +203,50 @@ void setup()
 /**
  * @brief Take picture with format JPEG per second
  */
-
+uint8_t val = 1;
 void loop()
 {
-  sleep(1); /* wait for one second to take still picture. */
+
+  /* Set pin to input mode */
+  pinMode(PIN_D22, INPUT);
+  pinMode(PIN_D23, INPUT);
+
+  volatile uint8_t *port = portInputRegister(digitalPinToPort(PIN_D22));
+  volatile uint8_t *mode = portModeRegister(digitalPinToPort(PIN_D22));
+
+  volatile uint8_t *portout = portInputRegister(digitalPinToPort(PIN_D23));
+  volatile uint8_t *modeout = portModeRegister(digitalPinToPort(PIN_D23));
+
+  *mode = 1; /* Input setting */
+  *modeout = 1;
+
+  uint8_t val = *port; /* Read */
+  if (val & 1){
+    direction = "checkin";
+    digitalWrite(LED0, HIGH);
+  }
+
+  uint8_t val2 = *portout; /* Read */
+  if (val2 & 1){
+    direction = "checkout";
+    digitalWrite(LED1, HIGH);
+  }
+
+  sleep(0.1); /* wait for one second to take still picture. */
+
+  // /* Set pin to input mode */
+  // pinMode(PIN_D22, INPUT);
+
+  // volatile uint8_t *port = portInputRegister(digitalPinToPort(PIN_D22));
+  // volatile uint8_t *mode = portModeRegister(digitalPinToPort(PIN_D22));
+
+  // *mode = 1; /* Input setting */
+
+  // uint8_t val = *port; /* Read */
+  // if (val & 1)
+  //   Serial.println("High");
+  // else
+  //   Serial.println("Low");
 
   /* You can change the format of still picture at here also, if you want. */
 
@@ -194,34 +257,21 @@ void loop()
    */
 
   /* This sample code can take pictures in every one second from starting. */
-
-  if (take_picture_count < TOTAL_PICTURE_COUNT)
+  if ((val || val2) & 1)
     {
-
-      /* Take still picture.
-      * Unlike video stream(startStreaming) , this API wait to receive image data
-      *  from camera device.
-      */
+      val = 0;
   
       Serial.println("call takePicture()");
       CamImage img = theCamera.takePicture();
 
-      /* Check availability of the img instance. */
-      /* If any errors occur, the img is not available. */
 
       if (img.isAvailable())
-        {
-          /* Create file name */
-    
+        {    
           char filename[16] = {0};
           sprintf(filename, "TEMP.jpg", take_picture_count);
     
           Serial.print("Save taken picture as ");
           Serial.print("TEMP.jpg");
-
-          /* Remove the old file with the same file name as new created file,
-           * and create new file.
-           */
 
           theSD.remove("TEMP.jpg");
           File myFile = theSD.open("TEMP.jpg", FILE_WRITE);
@@ -239,6 +289,9 @@ void loop()
           // Read the file and send it over serial
           size_t fileSize = file.size();
           Serial.println(fileSize);
+          
+          // send if chilent is cheking in our checking out
+          Serial.println(direction);
 
            // Read and send image data in 1024-byte chunks
           uint8_t chunk[1024];
@@ -249,33 +302,20 @@ void loop()
             Serial.write(chunk, bytesReadThisRound);
             bytesRead += bytesReadThisRound;
             file.seek(bytesRead); // Move the file pointer to the next chunk
-            // delay(10); // Add a small delay to ensure chunks are not sent too quickly
           }
 
-          // while (file.available()) {
-          //   Serial.print((char)file.read()); // Assuming ASCII encoding, might lose data for binary image
-          // }
           file.close();
         }
       else
         {
-          /* The size of a picture may exceed the allocated memory size.
-           * Then, allocate the larger memory size and/or decrease the size of a picture.
-           * [How to allocate the larger memory]
-           * - Decrease jpgbufsize_divisor specified by setStillPictureImageFormat()
-           * - Increase the Memory size from Arduino IDE tools Menu
-           * [How to decrease the size of a picture]
-           * - Decrease the JPEG quality by setJPEGQuality()
-           */
-
           Serial.println("Failed to take picture");
         }
-    }
-  else if (take_picture_count == TOTAL_PICTURE_COUNT)
-    {
-      Serial.println("End.");
-      theCamera.end();
-    }
 
-  take_picture_count++;
+      digitalWrite(LED0, LOW);
+      digitalWrite(LED1, LOW);
+
+      // Serial.println("End.");
+      // theCamera.end();
+    }
+  
 }
