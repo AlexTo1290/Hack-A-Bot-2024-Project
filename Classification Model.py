@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras
 import numpy as np
 
-EPOCHS = 10
+EPOCHS = 1
 LEARNING_RATE = 0.2
 BATCH_SIZE = 32
 
@@ -15,7 +15,7 @@ TRAIN_SIZE = (720, 480)
 # data_dir = "C:\\Users\\Alex\\Documents\\Hackabot\\Spresense Hackabot\\Training Images"
 data_dir = "Training Images - 258"
 
-train_ds = tf.keras.utils.image_dataset_from_directory(
+train_ds = keras.utils.image_dataset_from_directory(
     data_dir,
     validation_split=0.2,
     subset="training",
@@ -24,7 +24,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
     batch_size = BATCH_SIZE,
     )
 
-val_ds = tf.keras.utils.image_dataset_from_directory(
+val_ds = keras.utils.image_dataset_from_directory(
     data_dir,
     validation_split=0.2,
     subset="validation",
@@ -33,7 +33,7 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     batch_size = BATCH_SIZE,
     )
 
-test_ds = tf.keras.utils.image_dataset_from_directory(
+test_ds = keras.utils.image_dataset_from_directory(
     "Test",
     image_size=(180, 180),
     batch_size = BATCH_SIZE,
@@ -80,7 +80,7 @@ L2regularizer = keras.regularizers.L2(0.005)
 #     # tf.keras.layers.Dense(10, activation='softmax'),
 # ])
 
-model = tf.keras.Sequential([
+model = keras.Sequential([
     #  tf.keras.layers.Rescaling(1./255),
   tf.keras.layers.InputLayer(input_shape=(180, 180, 3)),
   tf.keras.layers.Conv2D(16, kernel_size=(7, 7), strides=(1, 1), activation='relu', input_shape=(180, 180, 1), padding="valid"),
@@ -100,9 +100,13 @@ model.compile(
 
 # train_ds = train_ds.cache().repeat().batch(BATCH_SIZE)
 
+example_input = tf.ones((1, 180, 180, 3))
+
 model.fit(train_ds, validation_data = val_ds, epochs=EPOCHS)
 model.summary()
 
+example_result = model.predict(example_input)
+print(example_result)
 
 # # Evaluate the model on the validation dataset
 val_loss, val_accuracy = model.evaluate(val_ds)
@@ -138,6 +142,22 @@ tflite_model_quant = converter.convert()
 """
 save_dir = "model.keras"
 model.save(save_dir)
+
+directory = "model/1"
+
+tf.saved_model.save(
+  model,
+  directory,
+)
+
+directory = "kerasmodel/1"
+tf.keras.models.save_model(
+  model,
+  directory,
+  overwrite=True,
+  include_optimizer=True,
+  #save_format=None,
+)
 
 tf_callable = tf.function(
     model.call,
