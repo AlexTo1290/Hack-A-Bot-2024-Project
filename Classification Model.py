@@ -2,7 +2,7 @@ import tensorflow as tf
 import keras
 import numpy as np
 
-EPOCHS = 20
+EPOCHS = 10
 LEARNING_RATE = 0.2
 BATCH_SIZE = 32
 
@@ -113,8 +113,7 @@ print("Validation Accuracy:", val_accuracy)
 
 
 # Convert the model to TensorFlow Lite
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
-tflite_model = converter.convert()
+
 
 
 # for images, labels in train_ds.take(1):
@@ -140,22 +139,22 @@ tflite_model_quant = converter.convert()
 save_dir = "model.keras"
 model.save(save_dir)
 
+tf_callable = tf.function(
+    model.call,
+    autograph=False,
+    input_signature=[tf.TensorSpec((1, 180, 180, 3), tf.float32)],
+    )
 
-
-converter = tf.lite.TFLiteConverter.from_saved_model(save_dir)
-
-converter.target_spec.supported_ops = [
-   tf.lite.OpsSet.TFLITE_BUILTINS, # enable TensorFlow Lite ops.
-   tf.lite.OpsSet.SELECT_TF_OPS # enable TensorFlow ops.
- ]
-converter.inference_input_type = tf.int8
-converter.inference_output_type = tf.int8
+tf_concrete_function = tf_callable.get_concrete_function()
+converter = tf.lite.TFLiteConverter.from_concrete_functions(
+    [tf_concrete_function], tf_callable
+    )
 tflite_model = converter.convert()
 
 # new_model = tf.keras.models.load_model('model.keras')
 
 # # Save the model in a file
-with open('model.tflite', 'wb') as f:
+with open('model2.tflite', 'wb') as f:
    f.write(tflite_model)
 
 # Test model
