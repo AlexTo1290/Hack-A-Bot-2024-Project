@@ -5,7 +5,7 @@ import json
 exInput = np.ones((1, 180, 180, 3))
 
 data = json.dumps({"signature_name": "serving_default", "inputs":
-                   {"inputs": exInput.tolist()}
+                   {"input_1": exInput.tolist()}
                    })
 
 headers = {"content-type": "application/json"}

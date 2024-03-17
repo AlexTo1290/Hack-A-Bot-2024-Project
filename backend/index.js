@@ -3,6 +3,7 @@ import connectDB from './config/db.js';
 import { config } from 'dotenv';
 import {Log} from './models/logModel.js';
 import bodyParser from 'body-parser';
+import axios from 'axios';
 
 config();
 
@@ -27,11 +28,13 @@ app.get('/', async (req, res) => {
     }
 );
 
-app.post("/checkIn", async (req, res) => {
+app.post("/checkIn/:item", async (req, res) => {
+    const item = req.params.item;
+
     try {
         const image = req.body;
         const log = Log({
-            item_name: "TBD",
+            item_name: item,
             message: "Checked In",
             image: image,
         });
@@ -42,11 +45,13 @@ app.post("/checkIn", async (req, res) => {
     }
 });
 
-app.post("/checkOut", async (req, res) => {
+app.post("/checkOut/:item", async (req, res) => {
+    const item = req.params.item;
+
     try {
         const image = req.body;
         const log = Log({
-            item_name: "TBD",
+            item_name: item,
             message: "Checked Out",
             image: image,
         });
@@ -54,5 +59,14 @@ app.post("/checkOut", async (req, res) => {
         res.sendStatus(200);
     } catch (error) {
         console.log(error)
+    }
+});
+
+app.get("/logs", async (req, res) => {
+    try {
+        const logs = await Log.find();
+        res.send(logs);
+    } catch (error) {
+        console.log(error);
     }
 });
