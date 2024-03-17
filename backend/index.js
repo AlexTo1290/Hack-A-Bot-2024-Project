@@ -1,24 +1,58 @@
-// Importing required modules
 import express from 'express';
-import { apiRouter } from './routes/api.js';
-import { run } from './config/db.js';
-import dotenv from 'dotenv';
-dotenv.config(); 
+import connectDB from './config/db.js';
+import { config } from 'dotenv';
+import {Log} from './models/logModel.js';
+import bodyParser from 'body-parser';
 
-// Connecting to the database
-run().catch(console.dir);
+config();
 
-// Creating an Express application
-const app = express();
+connectDB().catch(err=>console.log(err)); // Connect to the database
 
-app.use(express.json());
+const app = express()
+const port = 3000
 
-// api router
-app.use('/api', apiRouter);
+app.use(bodyParser.raw({ type: ["image/jpeg", "image/png"], limit: "100mb" }));
 
+app.listen(port, () => {
+  console.log(`Tool registering server on port ${port}`)
+});
 
-// Starting the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+app.get('/', async (req, res) => {
+    const log = Log({
+        item_name: "TBD",
+        message: "checked In",
+    });
+    await log.save();
+    res.send('Hello World!')
+    }
+);
+
+app.post("/checkIn", async (req, res) => {
+    try {
+        const image = req.body;
+        const log = Log({
+            item_name: "TBD",
+            message: "Checked In",
+            image: image,
+        });
+        await log.save();
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error)
+    }
+});
+
+app.post("/checkOut", async (req, res) => {
+    try {
+        const image = req.body;
+        const log = Log({
+            item_name: "TBD",
+            message: "Checked Out",
+            image: image,
+        });
+        await log.save();
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error)
+    }
 });
